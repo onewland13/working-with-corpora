@@ -1,3 +1,8 @@
+Dylan Phelan          
+Working With Corpora   
+Professor Gregory Crane       
+Sept. 16, 2018
+
 # Exercises for Assignment 1
 
 
@@ -127,4 +132,4 @@ In order to illustrate the difference in the operations, we can look at the way 
 ['imputation', 'impute', 'imputed', 'in', 'in', 'in']
 ```
 
-As we can see in the chunk of code above, the second set includes duplicate entries for the same terms since they occured with different spellings in the initial test. 
+As we can see in the chunk of code above, the second set includes duplicate entries for the same terms since they occured with different spellings in the initial text. 
