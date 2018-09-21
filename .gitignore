@@ -1,1 +1,4 @@
 .DS*
+*.aux
+*.log
+*.syntex*

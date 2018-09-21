@@ -2,9 +2,10 @@
 % Packages
 % ---
 \usepackage{listings} % Source code formatting and highlighting 
-\usepackage{amssymb}
-\usepackage{amsmath}
 \usepackage{fullpage}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{xparse}
 
 % Title variables
 % --- 
@@ -18,12 +19,41 @@
  
 % Definitions
 % ---- 
-% \def \solution {\vspace{10px}\noindent\emph{Solution}}
-\newenvironment{solution}[1][]{
-	\vspace{10px}\noindent\emph{Solution #1}
+% Colors
+\definecolor{lightCyan}{HTML}{62929E}
+\definecolor{khaki}{HTML}{C3B299}
+\definecolor{orange}{HTML}{FFA552}
+\definecolor{gray}{HTML}{B7B6C2}
+\definecolor{olive}{HTML}{657153}
+% Envs
+\newenvironment{solution}{
+	\vspace{10px}\noindent\emph{Solution:}
 }{
 	\vspace{10px}
 }
+% Cmds
+\newcommand{\codeword}[1]{
+	\texttt{\textcolor{lightCyan}{#1}}
+}
+% Define our code blocks
+\lstset{
+	frame=tb,
+	language=Python,
+	aboveskip=2mm,
+	belowskip=2mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numberstyle=\textcolor{khaki},
+	keywordstyle=\textcolor{orange},
+	commentstyle=\textcolor{gray},
+	stringstyle=\textcolor{olive},
+	numbers=none,
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=3
+}
+
  
 \begin{document}
 \maketitle
@@ -31,10 +61,51 @@
 \section*{Exercises for Chapter 2: Accessing Text Corpora and Lexical Resources}
 \subsection*{Problem 1}
 
-Create a variable phrase containing a list of words. Review the operations described in the previous chapter, including addition, multiplication, indexing, slicing, and sorting.
+Create a variable \codeword{phrase} containing a list of words. Review the operations described in the previous chapter, including addition, multiplication, indexing, slicing, and sorting.
 
 \begin{solution}
-	Solution goes here
+	
+	We can start by defining a variable \codeword{phrase} and \emph{add} a bit more detail to it
+	\begin{lstlisting}
+		>>> phrase = ["This", "should", "satisfy", "question", "one's", "requirements"]
+		>>> phrase = phrase + [',' 'I', 'hope', ]
+		>>> phrase
+        ['This', 'should', 'satisfy', 'question', "one's", 'requirements', ',I', 'hope', '!']
+	\end{lstlisting}
+
+    Maybe we want \emph{multiply} our enthusiasm 
+	\begin{lstlisting}
+	>>> enthusiasm_multiplier = ["!"]
+	>>> enthusiasm_multiplier *= 5
+	>>> enthusiasm_multiplier
+	['!', '!', '!', '!', '!']
+	>>> phrase += enthusiasm_multiplier
+	>>> phrase
+	['This', 'should', 'satisfy', 'question', "one's", 'requirements', ',I', 'hope', '!', '!', '!', '!', '!', '!']
+	\end{lstlisting}
+
+	Let's \emph{slice} out that uncertainty and infuse a bit of confidence into that phrase. You know who has confidence? \emph{Index}-fund traders... {\tiny a stretch, I know}
+	\begin{lstlisting}
+	>>> phrase[6:8]
+	[',I', 'hope']
+	>>> phrase = phrase[0:6] + phrase[8:]
+	>>> phrase
+	['This', 'should', 'satisfy', 'question', "one's", 'requirements', '!', '!', '!', '!', '!', '!']
+	>>> phrase[1]
+	'should'
+	>>> phrase[1] = 'will'
+	>>> phrase
+	['This', 'will', 'satisfy', 'question', "one's", 'requirements', '!', '!', '!', '!', '!', '!']
+	>>>
+	\end{lstlisting}
+	
+	And I can't seem to \emph{sort} out a good pun for this last operation... so this meta-pun will have to do.
+	\begin{lstlisting}
+	>>> yoda_phrase = sorted(phrase)
+	>>> yoda_phrase
+	['!', '!', '!', '!', '!', '!', 'This', "one's", 'question', 'requirements', 'satisfy', 'will']
+	\end{lstlisting}
+	
 \end{solution} 
 
 
@@ -42,7 +113,17 @@ Create a variable phrase containing a list of words. Review the operations descr
 Use the corpus module to explore austen-persuasion.txt. How many word tokens does this book have? How many word types?
 
 \begin{solution}
-	Solution goes here
+	\begin{lstlisting}
+		>>> from nltk.corpus import gutenberg
+		>>> gutenberg.words('austen-persuasion.txt')
+		['[', 'Persuasion', 'by', 'Jane', 'Austen', '1818', ...]
+		>>> words = len(gutenberg.words('austen-persuasion.txt'))
+		>>> words
+		98171
+		>>> word_types = set(gutenberg.words('austen-persuasion.txt'))
+		>>> len(word_types)
+		6132
+	\end{lstlisting}
 \end{solution}  
 
 
@@ -50,7 +131,18 @@ Use the corpus module to explore austen-persuasion.txt. How many word tokens doe
 Use the Brown corpus reader nltk.corpus.brown.words() or the Web text corpus reader nltk.corpus.webtext.words() to access some sample text in two different genres.
 
 \begin{solution}
-	Solution goes here
+	\begin{lstlisting}
+	>>> from nltk.corpus import brown
+	>>> brown.categories()
+	['adventure', 'belles_lettres', 'editorial', 'fiction', 'government', 'hobbies', 'humor', 'learned', 'lore', 'mystery', 'news', 'religion', 'reviews', 'romance', 'science_fiction']
+	>>> hobbies_words = brown.words(categories="hobbies")
+	>>> hobbies_words
+	['Too', 'often', 'a', 'beginning', 'bodybuilder', ...]
+	>>> sci_fi_words = brown.words(categories="science_fiction")
+	>>> sci_fi_words
+	['Now', 'that', 'he', 'knew', 'himself', 'to', 'be', ...]
+	>>> sci_fi_hobby_words = set(hobbies_words).intersection(set(sci_fi_words))
+	\end{lstlisting}
 \end{solution}  
 
 
@@ -70,6 +162,7 @@ Investigate the holonym-meronym relations for some nouns. Remember that there ar
 
 
 \subsection*{Problem 9}
+Pick a pair of texts and study the differences between them, in terms of vocabulary, vocabulary richness, genre, etc. Can you find pairs of words which have quite different meanings across the two texts, such as monstrous in Moby Dick and in Sense and Sensibility?
 
 \begin{solution}
 	Solution goes here
@@ -77,6 +170,12 @@ Investigate the holonym-meronym relations for some nouns. Remember that there ar
 
 
 \subsection*{Problem 23}
+Let f(w) be the frequency of a word w in free text. Suppose that all the words of a text are ranked according to their frequency, with the most frequent word first. Zipf's law states that the frequency of a word type is inversely proportional to its rank (i.e. f × r = k, for some constant k). For example, the 50th most common word type should occur three times as frequently as the 150th most common word type.
+Write a function to process a large text and plot word frequency against word rank using pylab.plot. Do you confirm Zipf's law? (Hint: it helps to use a logarithmic scale). What is going on at the extreme ends of the plotted line?
+\begin{enumerate}
+	\item Write a function to process a large text and plot word frequency against word rank using pylab.plot. Do you confirm Zipf's law? (Hint: it helps to use a logarithmic scale). What is going on at the extreme ends of the plotted line?
+	\item Generate random text, e.g., using random.choice("abcdefg "), taking care to include the space character. You will need to import random first. Use the string concatenation operator to accumulate characters into a (very) long string. Then tokenize this string, and generate the Zipf plot as before, and compare the two plots. What do you make of Zipf's Law in the light of this?
+\end{enumerate}
 
 \begin{solution}
 	Solution goes here
