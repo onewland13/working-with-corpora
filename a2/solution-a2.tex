@@ -6,6 +6,7 @@
 \usepackage{color}
 \usepackage{xcolor}
 \usepackage{xparse}
+\usepackage{graphicx}
 
 % Title variables
 % --- 
@@ -23,8 +24,8 @@
 \definecolor{lightCyan}{HTML}{62929E}
 \definecolor{khaki}{HTML}{C3B299}
 \definecolor{orange}{HTML}{FFA552}
-\definecolor{gray}{HTML}{B7B6C2}
-\definecolor{olive}{HTML}{657153}
+\definecolor{gray}{HTML}{A1A0AA}
+\definecolor{olive}{HTML}{516D27}
 % Envs
 \newenvironment{solution}{
 	\vspace{10px}\noindent\emph{Solution:}
@@ -48,7 +49,6 @@
 	keywordstyle=\textcolor{orange},
 	commentstyle=\textcolor{gray},
 	stringstyle=\textcolor{olive},
-	numbers=none,
 	breaklines=true,
 	breakatwhitespace=true,
 	tabsize=3
@@ -75,35 +75,35 @@ Create a variable \codeword{phrase} containing a list of words. Review the opera
 
     Maybe we want \emph{multiply} our enthusiasm 
 	\begin{lstlisting}
-	>>> enthusiasm_multiplier = ["!"]
-	>>> enthusiasm_multiplier *= 5
-	>>> enthusiasm_multiplier
-	['!', '!', '!', '!', '!']
-	>>> phrase += enthusiasm_multiplier
-	>>> phrase
-	['This', 'should', 'satisfy', 'question', "one's", 'requirements', ',I', 'hope', '!', '!', '!', '!', '!', '!']
+		>>> enthusiasm_multiplier = ["!"]
+		>>> enthusiasm_multiplier *= 5
+		>>> enthusiasm_multiplier
+		['!', '!', '!', '!', '!']
+		>>> phrase += enthusiasm_multiplier
+		>>> phrase
+		['This', 'should', 'satisfy', 'question', "one's", 'requirements', ',I', 'hope', '!', '!', '!', '!', '!', '!']
 	\end{lstlisting}
 
 	Let's \emph{slice} out that uncertainty and infuse a bit of confidence into that phrase. You know who has confidence? \emph{Index}-fund traders... {\tiny a stretch, I know}
 	\begin{lstlisting}
-	>>> phrase[6:8]
-	[',I', 'hope']
-	>>> phrase = phrase[0:6] + phrase[8:]
-	>>> phrase
-	['This', 'should', 'satisfy', 'question', "one's", 'requirements', '!', '!', '!', '!', '!', '!']
-	>>> phrase[1]
-	'should'
-	>>> phrase[1] = 'will'
-	>>> phrase
-	['This', 'will', 'satisfy', 'question', "one's", 'requirements', '!', '!', '!', '!', '!', '!']
-	>>>
+		>>> phrase[6:8]
+		[',I', 'hope']
+		>>> phrase = phrase[0:6] + phrase[8:]
+		>>> phrase
+		['This', 'should', 'satisfy', 'question', "one's", 'requirements', '!', '!', '!', '!', '!', '!']
+		>>> phrase[1]
+		'should'
+		>>> phrase[1] = 'will'
+		>>> phrase
+		['This', 'will', 'satisfy', 'question', "one's", 'requirements', '!', '!', '!', '!', '!', '!']
+		>>>
 	\end{lstlisting}
 	
 	And I can't seem to \emph{sort} out a good pun for this last operation... so this meta-pun will have to do.
 	\begin{lstlisting}
-	>>> yoda_phrase = sorted(phrase)
-	>>> yoda_phrase
-	['!', '!', '!', '!', '!', '!', 'This', "one's", 'question', 'requirements', 'satisfy', 'will']
+		>>> yoda_phrase = sorted(phrase)
+		>>> yoda_phrase
+		['!', '!', '!', '!', '!', '!', 'This', "one's", 'question', 'requirements', 'satisfy', 'will']
 	\end{lstlisting}
 	
 \end{solution} 
@@ -131,17 +131,22 @@ Use the corpus module to explore austen-persuasion.txt. How many word tokens doe
 Use the Brown corpus reader nltk.corpus.brown.words() or the Web text corpus reader nltk.corpus.webtext.words() to access some sample text in two different genres.
 
 \begin{solution}
+	Let's see what terms lie at the interesection of hobbies and sci\_fi, looking only at the first 200 and only at terms that are longer than five characters
 	\begin{lstlisting}
-	>>> from nltk.corpus import brown
-	>>> brown.categories()
-	['adventure', 'belles_lettres', 'editorial', 'fiction', 'government', 'hobbies', 'humor', 'learned', 'lore', 'mystery', 'news', 'religion', 'reviews', 'romance', 'science_fiction']
-	>>> hobbies_words = brown.words(categories="hobbies")
-	>>> hobbies_words
-	['Too', 'often', 'a', 'beginning', 'bodybuilder', ...]
-	>>> sci_fi_words = brown.words(categories="science_fiction")
-	>>> sci_fi_words
-	['Now', 'that', 'he', 'knew', 'himself', 'to', 'be', ...]
-	>>> sci_fi_hobby_words = set(hobbies_words).intersection(set(sci_fi_words))
+		>>> from nltk.corpus import brown
+		>>> brown.categories()
+		['adventure', 'belles_lettres', 'editorial', 'fiction', 'government', 'hobbies', 'humor', 'learned', 'lore', 'mystery', 'news', 'religion', 'reviews', 'romance', 'science_fiction']
+		>>> hobbies_words = brown.words(categories="hobbies")
+		>>> hobbies_words
+		['Too', 'often', 'a', 'beginning', 'bodybuilder', ...]
+		>>> sci_fi_words = brown.words(categories="science_fiction")
+		>>> sci_fi_words
+		['Now', 'that', 'he', 'knew', 'himself', 'to', 'be', ...]
+		>>> sci_fi_hobby_words = set(hobbies_words).intersection(set(sci_fi_words))
+		>>> fdistf_sci_fi_hobbies_terms = nltk.FreqDist(w.lower() for w in sci_fi_hobby_words)
+		>>> fdist_sci_fi_hobbies_terms = nltk.FreqDist(w.lower() for w in sci_fi_hobby_words)
+		>>> [word for (word, freq) in fdist_sci_fi_hobbies_terms.most_common(200) if len(word) > 5]
+		['school', 'according', 'neither', 'though', 'without', 'sometimes', 'actually', "you've", "there's", "that's", 'western', 'system', 'another', 'nevertheless', 'therefore', 'nobody', 'almost', 'before', 'through', 'perhaps', 'having', 'animals', 'nations', 'southern', 'behind', 'although', 'between', 'instead', 'service', 'states', 'however', 'nothing', 'second', 'function', "you're", 'selective', 'lifted', 'children', 'species', 'special', 'electronic', 'knotty', 'nerves', 'fertile', 'stayed', 'condition', 'seeing', 'identical', "they'll", 'century', 'immediate', 'wanted', 'estimate', 'content', 'vacuum', 'lessons', 'valuable', 'equipment', 'distinguished', 'gently', 'commonplace', 'shining', 'contained']
 	\end{lstlisting}
 \end{solution}  
 
@@ -150,14 +155,71 @@ Use the Brown corpus reader nltk.corpus.brown.words() or the Web text corpus rea
 Read in the texts of the State of the Union addresses, using the state\_union corpus reader. Count occurrences of men, women, and people in each document. What has happened to the usage of these words over time?
 
 \begin{solution}
-	Solution goes here
+	Based on the figure below, we can determine a few insights: 
+	\begin{enumerate}
+		
+		\item The term 'women' is consistently less popular than the term 'men' until the 1970's, after which time the two are much more consistent in frequency.
+		
+		\item The term 'people' has historically been a more popular term than 'men' or 'women'.
+		
+		\item The term 'people' had a major spike in popularity the mid 90's.
+		
+		\item The use of the term 'people' looks like it has been on the decline in the last 10 years of recorded data, whereas the terms 'men' and 'women' are increasing in popularity in that same period.
+	\end{enumerate}
+	\hspace*{-50pt}
+	% Link to the state of the union conditional frequency figure
+	\includegraphics[width=550pt]{state_of_the_union_comp_men_people_women.png}
+	Generated with the following code:
+	\begin{lstlisting}
+		>>> from nltk.corpus import state_union
+		>>> cfd = nltk.ConditionalFreqDist(
+		...     (target, fileid[:4])
+		...     for fileid in state_union.fileids()
+		...     for w in state_union.words(fileid)
+		...     for target in ['men', 'women', 'people']
+		...     if w.lower().startswith(target)
+		... )
+		>>> cfd.plot()
+	\end{lstlisting}
 \end{solution}  
 
 
 \subsection*{Problem 5}
 Investigate the holonym-meronym relations for some nouns. Remember that there are three kinds of holonym-meronym relation, so you need to use: member\_meronyms(), part\_meronyms(),  substance\_meronyms(), member\_holonyms(), part\_holonyms(), and substance\_holonyms().
+
 \begin{solution}
-	Solution goes here
+	Originally I was trying individual terms that I thought could have various types of meronyms and holonyms, which was painfully fruitless. To investigate the problem more deeply, I wrote a small script that could print out various terms with holonyms and meronyms from Moby Dick, as provided by the \codeword{nltk.corpus.book} module: 
+	
+	\begin{lstlisting}
+		>>> from nltk.book import *
+		>>> from nltk.corpus import wordnet as wn
+		>>> for w in vocab_1[:600]:
+		...     avail_synsets = wn.synsets(w)
+		...     if len(avail_synsets) > 0:
+		...         # For all the synsets, look for holobyms and meronyms
+		...         for synset in avail_synsets:
+		...             member_m = synset.member_meronyms()
+		...             part_m = synset.part_meronyms()
+		...             substance_m = synset.substance_meronyms()
+		...             member_h = synset.member_holonyms()
+		...             part_h = synset.part_holonyms()
+		...             substance_h = synset.substance_holonyms()
+		...             # If we have any valid holonyms or meronyms, print them out for viewing
+		...             if (member_m or part_m or substance_m or member_m or part_m or substance_m):
+		...                 print('\n\nSynset: ', synset)
+		...                 if (member_m or part_m or substance_m):
+		...                     print("--- meronyms")
+		...                     if len(member_m) > 0: print("member_m: ", member_m)
+		...                     if len(part_m) > 0: print("part_m: ", part_m)
+		...                     if len(substance_m) > 0: print("substance_m: ", substance_m)
+		...                 if (member_h or part_h or substance_h):
+		...                     print("--- holonymss")
+		...                     if len(member_h) > 0: print("member_h: ", member_h)
+		...                     if len(part_h) > 0: print("part_h: ", part_h)
+		...                     if len(substance_h) > 0: print("substance_h: ", substance_h)
+			
+			
+	\end{lstlisting}
 \end{solution}  
 
 
