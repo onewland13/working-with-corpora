@@ -1,4 +1,6 @@
 from nltk.corpus import wordnet as wn
+import time
+
 # problem 4
 from nltk.corpus import state_union
 cfd = nltk.ConditionalFreqDist(
@@ -57,3 +59,49 @@ for w in vocab_1[:1600]:
                 print("--- holonymss")
                 print("substance_h: The above Synset term is made of: ", substance_h) 
 
+
+
+# Problem 9 
+whit = nltk.Text(nltk.corpus.gutenberg.words('whitman-leaves.txt'))
+moby = nltk.Text(nltk.corpus.gutenberg.words('melville-moby_dick.txt'))
+def vocab(txt): 
+    return set(w.lower() for w in txt if w.isalpha())
+
+def vocab_len(txt): 
+    return len(vocab(txt))
+
+def vocab_richness(txt): 
+    return vocab_len(txt) / len(txt)
+
+print("Vocab: ", vocab_len(whit), " Richness: ", vocab_richness(whit))
+print("Vocab: ", vocab_len(moby), " Richness: ", vocab_richness(moby))
+whit.collocations()
+moby.collocations()
+
+whit.similar('cold')
+moby.similar('cold')
+
+whit.similar('dark')
+moby.similar('dark')
+
+whit.similar('main')
+moby.similar('main')
+
+from nltk.corpus import reuters
+import pylab
+
+r_words = reuters.words()
+
+def zipf_plot(large_txt): 
+    fdist = nltk.FreqDist(large_txt)
+    pylab.plot(
+        # Add one so we don't have 0 values in play
+        range(1, fdist.B() + 1),      # fdist.B() is number of unique sample values (or bins)
+        fdist.values()                # y-axis: word count
+    )
+    # Let's use a log scale per instructions 
+    # pylab.xscale('log')
+    pylab.yscale('log')
+    pylab.show()
+
+zipf_plot(r_words)

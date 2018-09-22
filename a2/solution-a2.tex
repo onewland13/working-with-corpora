@@ -68,9 +68,9 @@ Create a variable \codeword{phrase} containing a list of words. Review the opera
 	We can start by defining a variable \codeword{phrase} and \emph{add} a bit more detail to it
 	\begin{lstlisting}
 		>>> phrase = ["This", "should", "satisfy", "question", "one's", "requirements"]
-		>>> phrase = phrase + [',' 'I', 'hope', ]
+		>>> phrase = phrase + [', I', 'hope', ]
 		>>> phrase
-        ['This', 'should', 'satisfy', 'question', "one's", 'requirements', ',I', 'hope', '!']
+        ['This', 'should', 'satisfy', 'question', "one's", 'requirements', ', I', 'hope', '!']
 	\end{lstlisting}
 
     Maybe we want \emph{multiply} our enthusiasm 
@@ -81,13 +81,13 @@ Create a variable \codeword{phrase} containing a list of words. Review the opera
 		['!', '!', '!', '!', '!']
 		>>> phrase += enthusiasm_multiplier
 		>>> phrase
-		['This', 'should', 'satisfy', 'question', "one's", 'requirements', ',I', 'hope', '!', '!', '!', '!', '!', '!']
+		['This', 'should', 'satisfy', 'question', "one's", 'requirements', ', I', 'hope', '!', '!', '!', '!', '!', '!']
 	\end{lstlisting}
 
 	Let's \emph{slice} out that uncertainty and infuse a bit of confidence into that phrase. You know who has confidence? \emph{Index}-fund traders... {\tiny a stretch, I know}
 	\begin{lstlisting}
 		>>> phrase[6:8]
-		[',I', 'hope']
+		[', I', 'hope']
 		>>> phrase = phrase[0:6] + phrase[8:]
 		>>> phrase
 		['This', 'should', 'satisfy', 'question', "one's", 'requirements', '!', '!', '!', '!', '!', '!']
@@ -335,14 +335,58 @@ Pick a pair of texts and study the differences between them, in terms of vocabul
 
 \subsection*{Problem 23}
 Let f(w) be the frequency of a word w in free text. Suppose that all the words of a text are ranked according to their frequency, with the most frequent word first. Zipf's law states that the frequency of a word type is inversely proportional to its rank (i.e. f × r = k, for some constant k). For example, the 50th most common word type should occur three times as frequently as the 150th most common word type.
-Write a function to process a large text and plot word frequency against word rank using pylab.plot. Do you confirm Zipf's law? (Hint: it helps to use a logarithmic scale). What is going on at the extreme ends of the plotted line?
+
 \begin{enumerate}
+	
 	\item Write a function to process a large text and plot word frequency against word rank using pylab.plot. Do you confirm Zipf's law? (Hint: it helps to use a logarithmic scale). What is going on at the extreme ends of the plotted line?
+	
 	\item Generate random text, e.g., using random.choice("abcdefg "), taking care to include the space character. You will need to import random first. Use the string concatenation operator to accumulate characters into a (very) long string. Then tokenize this string, and generate the Zipf plot as before, and compare the two plots. What do you make of Zipf's Law in the light of this?
+
 \end{enumerate}
 
 \begin{solution}
-	Solution goes here
+	
+	For part 1, I looked at the reuters text. The graph, though high in variability, serves to confirm Zipf's law. As we continued down the x-axis, the values trend down logarithmically; similarly, at the beginning of the x-axis, values tend to account for orders of magnitude more occurrences than values farther down on the graph.
+	
+	\hspace*{-50pt}
+	% Link to the state of the union conditional frequency figure
+	\includegraphics[width=550pt]{zipf_law_reuters.png}
+	
+	For part 2, I generated a graph using strings created from 10 million randomly generated characters. The data I generated bares a resemblance to the canonical Zipf's plot, but the graph has more stark plateaus than it does a general decline. This may be because of the 1 in 8 likelihood of a space character, and the relatively uniform likelihood of any random string with the same number of characters. Said another way, any string with 7 non-space characters is, in the long run, equally likely to be generate, but even the most common 8 character string in a set of randomly generated strings will occur, roughly, 1/8th as much as the least common 7-character string.  
+	
+	\hspace*{-50pt}
+	% Link to the state of the union conditional frequency figure
+	\includegraphics[width=550pt]{zipf_plot_random.png}	
+	
+	\textbf{Supporting Code}
+	\begin{lstlisting}
+		>>> from nltk.corpus import reuters
+		>>> import pylab
+				>>> def zipf_plot(large_txt):
+		...     fdist = nltk.FreqDist(large_txt)
+		...     pylab.plot(
+		...         # Add one so we don't have 0 values in play
+		...         range(1, fdist.B() + 1),      # fdist.B() is number of unique sample values (or bins)
+		...         fdist.values()                # y-axis: word count
+		...     )
+		...     # Let's use a log scale per instructions
+		...     pylab.xscale('log')
+		...     pylab.yscale('log')
+		...     pylab.show()
+		...
+		# Part 1
+		>>> r_words = reuters.words()
+		>>>
+		>>> zipf_plot(r_words)
+		# Part 2
+		>>> rand_string = ""
+		>>> for i in range(10000000):
+		...     rand_string += random.choice("abcdefg ")
+		...
+		>>> rand_text = rand_string.split()
+		>>> zipf_plot(rand_text)
+	\end{lstlisting}
+	
 \end{solution}  
 
 
