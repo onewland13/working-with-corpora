@@ -87,6 +87,7 @@ moby.similar('dark')
 whit.similar('main')
 moby.similar('main')
 
+# Problem 23 
 from nltk.corpus import reuters
 import pylab
 
@@ -100,8 +101,15 @@ def zipf_plot(large_txt):
         fdist.values()                # y-axis: word count
     )
     # Let's use a log scale per instructions 
-    # pylab.xscale('log')
+    pylab.xscale('log')
     pylab.yscale('log')
     pylab.show()
 
 zipf_plot(r_words)
+
+rand_string = ""
+for i in range(10000000):
+    rand_string += random.choice("abcdefg ")
+
+rand_text = rand_string.split()
+zipf_plot(rand_text)
