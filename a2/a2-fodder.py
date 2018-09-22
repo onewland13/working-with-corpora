@@ -78,6 +78,18 @@ print("Vocab: ", vocab_len(moby), " Richness: ", vocab_richness(moby))
 whit.collocations()
 moby.collocations()
 
+['new', 'good', 'high', 'old', 'great', 'big', 'American', 'small', 'large', 'national', 'young', 'different', 'black', 'long', 'little', 'important', 'political', 'bad', 'white', 'real', 'best', 'right', 'social', 'only', 'public', 'sure', 'low', 'early', 'able', 'human', 'local', 'late', 'hard', 'major', 'better', 'economic', 'strong', 'possible', 'whole', 'free', 'military', 'true', 'federal', 'international', 'full', 'special', 'easy', 'clear', 'recent', 'certain', 'personal', 'open', 'red', 'difficult', 'available', 'likely', 'short', 'single', 'medical', 'current', 'wrong', 'private', 'past', 'foreign', 'fine', 'common', 'poor', 'natural', 'significant', 'similar', 'hot', 'dead', 'central', 'happy', 'serious', 'ready', 'simple', 'left', 'physical', 'general', 'environmental', 'financial', 'blue', 'democratic', 'dark', 'various', 'entire', 'close', 'legal', 'religious', 'cold', 'final', 'main', 'green', 'nice', 'huge', 'popular', 'traditional', 'cultural']
+
+count = 1
+for adj in adjs[45:]:
+    if count > 50: break
+    print('\nAdj: ', adj)
+    count += 1
+    print("Whit: ")
+    whit.similar(adj)
+    print("Blake: ")
+    moby.similar(adj)
+
 whit.similar('cold')
 moby.similar('cold')
 
