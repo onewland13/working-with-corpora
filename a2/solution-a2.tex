@@ -5,6 +5,7 @@
 \usepackage{fullpage}
 \usepackage{color}
 \usepackage{xcolor}
+\usepackage{hyperref}
 \usepackage{xparse}
 \usepackage{graphicx}
 
@@ -66,15 +67,20 @@ Create a variable \codeword{phrase} containing a list of words. Review the opera
 \begin{solution}
 	
 	We can start by defining a variable \codeword{phrase} and \emph{add} a bit more detail to it
+	
 	\begin{lstlisting}
+	
 		>>> phrase = ["This", "should", "satisfy", "question", "one's", "requirements"]
 		>>> phrase = phrase + [', I', 'hope', ]
 		>>> phrase
         ['This', 'should', 'satisfy', 'question', "one's", 'requirements', ', I', 'hope', '!']
+	
 	\end{lstlisting}
 
     Maybe we want \emph{multiply} our enthusiasm 
+	
 	\begin{lstlisting}
+	
 		>>> enthusiasm_multiplier = ["!"]
 		>>> enthusiasm_multiplier *= 5
 		>>> enthusiasm_multiplier
@@ -82,9 +88,11 @@ Create a variable \codeword{phrase} containing a list of words. Review the opera
 		>>> phrase += enthusiasm_multiplier
 		>>> phrase
 		['This', 'should', 'satisfy', 'question', "one's", 'requirements', ', I', 'hope', '!', '!', '!', '!', '!', '!']
+	
 	\end{lstlisting}
 
 	Let's \emph{slice} out that uncertainty and infuse a bit of confidence into that phrase. You know who has confidence? \emph{Index}-fund traders... {\tiny a stretch, I know}
+	
 	\begin{lstlisting}
 		>>> phrase[6:8]
 		[', I', 'hope']
@@ -96,14 +104,17 @@ Create a variable \codeword{phrase} containing a list of words. Review the opera
 		>>> phrase[1] = 'will'
 		>>> phrase
 		['This', 'will', 'satisfy', 'question', "one's", 'requirements', '!', '!', '!', '!', '!', '!']
-		>>>
+	
 	\end{lstlisting}
 	
 	And I can't seem to \emph{sort} out a good pun for this last operation... so this meta-pun will have to do.
+	
 	\begin{lstlisting}
+	
 		>>> yoda_phrase = sorted(phrase)
 		>>> yoda_phrase
 		['!', '!', '!', '!', '!', '!', 'This', "one's", 'question', 'requirements', 'satisfy', 'will']
+	
 	\end{lstlisting}
 	
 \end{solution} 
@@ -117,6 +128,7 @@ Use the corpus module to explore austen-persuasion.txt. How many word tokens doe
 	98171 word tokens, and 6132 word types, as determined by the following code:
 	
 	\begin{lstlisting}
+	
 		>>> from nltk.corpus import gutenberg
 		>>> gutenberg.words('austen-persuasion.txt')
 		['[', 'Persuasion', 'by', 'Jane', 'Austen', '1818', ...]
@@ -126,6 +138,7 @@ Use the corpus module to explore austen-persuasion.txt. How many word tokens doe
 		>>> word_types = set(gutenberg.words('austen-persuasion.txt'))
 		>>> len(word_types)
 		6132
+	
 	\end{lstlisting}
 	
 \end{solution}  
@@ -136,8 +149,10 @@ Use the Brown corpus reader nltk.corpus.brown.words() or the Web text corpus rea
 
 \begin{solution}
 	
-	Let's see what terms lie at the interesection of hobbies and sci\_fi, looking only at the first 200 and only at terms that are longer than five characters
+	Let's see what terms lie at the intersection of hobbies and sci\_fi, looking only at the first 200 and only at terms that are longer than five characters
+	
 	\begin{lstlisting}
+	
 		>>> from nltk.corpus import brown
 		>>> brown.categories()
 		['adventure', 'belles_lettres', 'editorial', 'fiction', 'government', 'hobbies', 'humor', 'learned', 'lore', 'mystery', 'news', 'religion', 'reviews', 'romance', 'science_fiction']
@@ -152,6 +167,7 @@ Use the Brown corpus reader nltk.corpus.brown.words() or the Web text corpus rea
 		>>> fdist_sci_fi_hobbies_terms = nltk.FreqDist(w.lower() for w in sci_fi_hobby_words)
 		>>> [word for (word, freq) in fdist_sci_fi_hobbies_terms.most_common(200) if len(word) > 5]
 		['school', 'according', 'neither', 'though', 'without', 'sometimes', 'actually', "you've", "there's", "that's", 'western', 'system', 'another', 'nevertheless', 'therefore', 'nobody', 'almost', 'before', 'through', 'perhaps', 'having', 'animals', 'nations', 'southern', 'behind', 'although', 'between', 'instead', 'service', 'states', 'however', 'nothing', 'second', 'function', "you're", 'selective', 'lifted', 'children', 'species', 'special', 'electronic', 'knotty', 'nerves', 'fertile', 'stayed', 'condition', 'seeing', 'identical', "they'll", 'century', 'immediate', 'wanted', 'estimate', 'content', 'vacuum', 'lessons', 'valuable', 'equipment', 'distinguished', 'gently', 'commonplace', 'shining', 'contained']
+	
 	\end{lstlisting}
 	
 \end{solution}  
@@ -163,6 +179,7 @@ Read in the texts of the State of the Union addresses, using the state\_union co
 \begin{solution}
 	
 	Based on the figure below, we can determine a few insights: 
+	
 	\begin{enumerate}
 		
 		\item The term 'women' is consistently less popular than the term 'men' until the 1970's, after which time the two are much more consistent in frequency.
@@ -172,12 +189,16 @@ Read in the texts of the State of the Union addresses, using the state\_union co
 		\item The term 'people' had a major spike in popularity the mid 90's.
 		
 		\item The use of the term 'people' looks like it has been on the decline in the last 10 years of recorded data, whereas the terms 'men' and 'women' are increasing in popularity in that same period.
+	
 	\end{enumerate}
+	
 	\hspace*{-50pt}
 	% Link to the state of the union conditional frequency figure
 	\includegraphics[width=550pt]{state_of_the_union_comp_men_people_women.png}
 	Generated with the following code:
+	
 	\begin{lstlisting}
+	
 		>>> from nltk.corpus import state_union
 		>>> cfd = nltk.ConditionalFreqDist(
 		...     (target, fileid[:4])
@@ -187,6 +208,7 @@ Read in the texts of the State of the Union addresses, using the state\_union co
 		...     if w.lower().startswith(target)
 		... )
 		>>> cfd.plot()
+	
 	\end{lstlisting}
 	
 \end{solution}  
@@ -230,6 +252,7 @@ Investigate the holonym-meronym relations for some nouns. Remember that there ar
 	\end{lstlisting}
 	
 	Which provided many examples of these different types of holonyms and meronyms. Too many to include, but I've highlighted a few I thought were interesting that also cover all 6 cases:
+	
 	\begin{lstlisting}
 		
 		Synset:  Synset('flock.n.05')
@@ -262,6 +285,7 @@ Investigate the holonym-meronym relations for some nouns. Remember that there ar
 		substance_h: The above Synset term is made of:  [Synset('grape.n.01'), Synset('negus.n.01')]
 		
 	\end{lstlisting}
+	
 \end{solution}  
 
 
@@ -269,7 +293,9 @@ Investigate the holonym-meronym relations for some nouns. Remember that there ar
 Pick a pair of texts and study the differences between them, in terms of vocabulary, vocabulary richness, genre, etc. Can you find pairs of words which have quite different meanings across the two texts, such as monstrous in Moby Dick and in Sense and Sensibility?
 
 \begin{solution}
+	
 	Looking at Whitman's "Leaves of Grass" and the Melville's "Moby Dick", we could highlight the following features and key differences: 
+	
 	\begin{enumerate}
 		
 		\item Whitman - Vocab:  12324  Richness:  0.07956973973902881
@@ -278,7 +304,7 @@ Pick a pair of texts and study the differences between them, in terms of vocabul
 		
 		\item The collocations in "Leaves of Grass" highlight themes of nature, time, growth, and cycles of change, whereas the collocations in "Moby Dick" highlight the books nautical nature, characters and the central role of whales in the book.
 		
-		\item Using the \codeword{text.similar(term)} function on some common adjectives in the english language, we don't such a difference in usage as distinct in the example above; but we do see a difference in the things being described by the adjectives, Whitman referring more often to the Earth as soil and Terra and sky, whereas Melville more often than not will be describing the sea and the creatures within. Below I've provided example code for the terms 'main', 'dark', and 'cold'.
+		\item Using the \codeword{text.similar(term)} function on some common adjectives in the English language, we don't such a difference in usage as distinct in the example above; but we do see a difference in the things being described by the adjectives, Whitman referring more often to the Earth as soil and Terra and sky, whereas Melville more often than not will be describing the sea and the creatures within. Below I've provided example code for the terms 'main', 'dark', and 'cold'.
 	
 	\end{enumerate}
 	
@@ -352,7 +378,7 @@ Let f(w) be the frequency of a word w in free text. Suppose that all the words o
 	% Link to the state of the union conditional frequency figure
 	\includegraphics[width=550pt]{zipf_law_reuters.png}
 	
-	For part 2, I generated a graph using strings created from 10 million randomly generated characters. The data I generated bares a resemblance to the canonical Zipf's plot, but the graph has more stark plateaus than it does a general decline. This may be because of the 1 in 8 likelihood of a space character, and the relatively uniform likelihood of any random string with the same number of characters. Said another way, any string with 7 non-space characters is, in the long run, equally likely to be generate, but even the most common 8 character string in a set of randomly generated strings will occur, roughly, 1/8th as much as the least common 7-character string.  
+	For part 2, I generated a graph using strings created from 10 million randomly generated characters. The data I generated bares a resemblance to the canonical Zipf's plot, but the graph has more stark plateaus than it does a general decline. This may be because of the 1 in 8 likelihood of a space character, and the relatively uniform likelihood of any random string with the same number of characters. Said another way, any string with 7 non-space characters is, in the long run, equally likely to be generate, but even the most common 8 character string in a set of randomly generated strings will occur, roughly, 1/8th as much as the least common 7-character string. 
 	
 	\hspace*{-50pt}
 	% Link to the state of the union conditional frequency figure
@@ -393,6 +419,7 @@ Let f(w) be the frequency of a word w in free text. Suppose that all the words o
 \section*{Research Publication of Interest} Identify a recent research publication that interests you. Write a very short summary and explain why you found it interesting. Be prepared to discuss this in class next week. Suggested publications include (but are by no means limited to): 
 
 \begin{enumerate}
+
 	\item Digital Humanities Quarterly (DHQ): http://www.digitalhumanities.org/dhq/ 
 	
 	\item The Human Language Technology Conference (HLT): https://aclanthology.coli.uni-saarland.de/venues/hlt
@@ -401,8 +428,13 @@ Let f(w) be the frequency of a word w in free text. Suppose that all the words o
 	
 	\item Anything that you know of and think would suit the content of the class.
 	
-	
 \end{enumerate}
+
+\begin{solution}
+	
+	I poked around a few of the recommended publications, and while combing through the ACL Anthology's website I stumbled upon the \href{https://www.mitpressjournals.org/loi/coli}{Computational Linguistics archive}. What caught my eye with this publication was the large spread of articles, everything from the intricate mathematics behind some modern deep learning models to the ethical challenges involved in designing automated dialogue systems. That breadth in content can serve as fertile ground for some intriguing, interdisciplinary problem solving, one of the parts of computer science I'm most passionate about. 
+	
+\end{solution}
 
 
 \end{document}
