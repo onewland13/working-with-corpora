@@ -1,0 +1,143 @@
+\documentclass[11pt]{article}
+% Packages
+% ---
+\usepackage{listings} % Source code formatting and highlighting 
+\usepackage{fullpage}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{xparse}
+\usepackage{graphicx}
+
+% Title variables
+% --- 
+\author{ 
+	Dylan Phelan \\ 
+	Working With Corpora \\ 
+	Professor Gregory Crane 
+}
+\title{Assignment 3}
+\date{September 29, 2018}
+ 
+% Definitions
+% ---- 
+% Colors
+\definecolor{lightCyan}{HTML}{62929E}
+\definecolor{khaki}{HTML}{C3B299}
+\definecolor{orange}{HTML}{FFA552}
+\definecolor{gray}{HTML}{A1A0AA}
+\definecolor{olive}{HTML}{516D27}
+% Envs
+\newenvironment{solution}{
+	\vspace{10px}\noindent\emph{Solution:}
+}{
+	\vspace{10px}
+}
+% Cmds
+\newcommand{\codeword}[1]{
+	\texttt{\textcolor{lightCyan}{#1}}
+}
+% Define our code blocks
+\lstset{
+	frame=tb,
+	language=Python,
+	aboveskip=2mm,
+	belowskip=2mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numberstyle=\textcolor{khaki},
+	keywordstyle=\textcolor{orange},
+	commentstyle=\textcolor{gray},
+	stringstyle=\textcolor{olive},
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=3
+}
+
+ 
+\begin{document}
+\maketitle
+
+\section*{Exercises for Chapter 3: Processing Raw Text}
+\subsection*{Problem 21}
+
+ Write a function unknown() that takes a URL as its argument, and returns a list of unknown words that occur on that webpage. In order to do this, extract all substrings consisting of lowercase letters (using re.findall()) and remove any items from this set that occur in the Words Corpus (nltk.corpus.words). Try to categorize these words manually and discuss your findings.
+
+\begin{solution}
+	
+	Solution goes here
+	
+	\begin{lstlisting}
+		>>> Code Goes Here
+		>>> More crap here
+	\end{lstlisting}
+
+\end{solution} 
+
+
+\subsection*{Problem 22}
+
+Use the corpus module to explore austen-persuasion.txt. How many word tokens does this book have? How many word types?
+
+\begin{solution}
+	
+	Solution goes here
+	
+	\begin{lstlisting}
+	>>> Code Goes Here
+	>>> More crap here
+	\end{lstlisting}
+	
+\end{solution} 
+
+
+\subsection*{Problem 29}
+Use the Brown corpus reader nltk.corpus.brown.words() or the Web text corpus reader nltk.corpus.webtext.words() to access some sample text in two different genres.
+
+\begin{solution}
+	
+	Solution goes here
+	
+	\begin{lstlisting}
+	>>> Code Goes Here
+	>>> More crap here
+	\end{lstlisting}
+	
+\end{solution} 
+
+
+
+\section*{Intro to XML} Read \href{http://www.tei-c.org/release/doc/tei-p5-doc/en/html/SG.html}{“A Gentle Introduction to XML”} 
+Install \href{https://github.com/UUDigitalHumanitieslab/tei_reader}{this TEI reader} and input a TEI XML file.
+Perform exercise 42 (above) on the raw text of the TEI XML file. You can find any TEI XML text but you could start with an English translation \href{https://github.com/OpenGreekAndLatin/english_trans-dev/tree/master/volumes}{found here}. 
+
+
+\begin{solution}
+	
+	Solution goes here
+	
+	\begin{lstlisting}
+	>>> Code Goes Here
+	>>> More crap here
+	\end{lstlisting}
+	
+\end{solution} 
+
+
+\section*{Investigating Text Resources} Identify a possible available textual source that you might use for a project and identify the possible challenges that you will face in preprocessing the text. You can start with the sources \href{https://docs.google.com/document/d/1Hh93ixO_204mtS0Vva-X52bt1ZJMajLHxrcmfWF5JHg/edit}{found here}, a list that will expand during the course of the semester.
+
+\begin{solution}
+	
+	Solution goes here
+	
+	\begin{lstlisting}
+	>>> Code Goes Here
+	>>> More crap here
+	\end{lstlisting}
+	
+\end{solution} 
+
+
+
+\end{document}

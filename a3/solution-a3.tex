@@ -1,0 +1,239 @@
+
+\documentclass[11pt]{article}
+% Packages
+% ---
+\usepackage{listings} % Source code formatting and highlighting 
+\usepackage{fullpage}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{xparse}
+\usepackage{graphicx}
+
+% Title variables
+% --- 
+\author{ 
+	Dylan Phelan \\ 
+	Working With Corpora \\ 
+	Professor Gregory Crane 
+}
+\title{Assignment 3}
+\date{September 29, 2018}
+ 
+% Definitions
+% ---- 
+% Colors
+\definecolor{lightCyan}{HTML}{62929E}
+\definecolor{khaki}{HTML}{C3B299}
+\definecolor{orange}{HTML}{FFA552}
+\definecolor{gray}{HTML}{A1A0AA}
+\definecolor{olive}{HTML}{516D27}
+% Envs
+\newenvironment{solution}{
+	\vspace{10px}\noindent\emph{Solution:}
+}{
+	\vspace{10px}
+}
+% Cmds
+\newcommand{\codeword}[1]{
+	\texttt{\textcolor{lightCyan}{#1}}
+}
+% Define our code blocks
+\lstset{
+	frame=tb,
+	language=Python,
+	aboveskip=2mm,
+	belowskip=2mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numberstyle=\textcolor{khaki},
+	keywordstyle=\textcolor{orange},
+	commentstyle=\textcolor{gray},
+	stringstyle=\textcolor{olive},
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=3
+}
+
+ 
+\begin{document}
+\maketitle
+
+\section*{Exercises for Chapter 3: Processing Raw Text}
+\subsection*{Problem 21}
+
+ Write a function \codeword{unknown()} that takes a URL as its argument, and returns a list of unknown words that occur on that webpage. In order to do this, extract all substrings consisting of lowercase letters (using re.findall()) and remove any items from this set that occur in the Words Corpus (nltk.corpus.words). Try to categorize these words manually and discuss your findings.
+
+\begin{solution}
+	
+	When I initially ran my \codeword{unknown} function on the link to chapter three of the nltk book, I thought for sure I had done something wrong in my code. Many of the terms coming up as 'unknown' were common words like 'cases', 'using' and 'normalized'.  I then manually loaded up the Words Corpus in a python interpreter to check and see if I could find those terms manually in a list of words in the corpus; much to my surprise, I couldn't! It looks like the Words Corpus ( as I confirmed later by reading through more of Chapter 3) only includes common word lemmas, ignoring common variations on those stem terms. To get a better idea of how many 'actually' new terms were being used on the linked-to  webpage, I removed any words that had any common suffixes. After controlling for those terms, a lot of the terms I was seeing were HTML-related terms that weren't parsed out by BeautifulSoup (a problem that gets exacerbated on webpages rich in javascript and advertisements), misspellings of terms, and example text that wasn't meant to pass as an actual English word. Below I've provided my code for the \codeword{unknown} function:
+	
+	\begin{lstlisting}
+		def unknown(url): 
+			# Step 1: get HTML
+			response = request.urlopen(url)
+			html = response.read().decode('utf-8')
+			# Step 2: Convert to raw text
+			raw = BeautifulSoup(html).get_text()
+			# Step 3: Get the difference  
+			known_words = set([w for w in nltk.corpus.words.words('en') if w.islower()])
+			words_on_webpage = set(re.findall(r"\b[a-z]+\b", raw))
+			unknown_words = sorted(words_on_webpage.difference(known_words))
+			
+			print(f'Total Words from webpage: {len(words_on_webpage)}')
+			print(f'Total unknown words: {len(unknown_words)}')
+			print(f'Percentage unknown words: {len(unknown_words)/len(words_on_webpage)}')
+			# Manual investigation of results highlights that the Words Corpus doesn't include variations on word lemmas 
+			# Let's remove those variations for a better idea of how many new 'terms' appear on our webpage 
+			word_versions = re.findall(r'\b[a-z]+(?:ing|ly|ed|ious|ies|ive|es|s|ment)', ' '.join(list(unknown_words)))
+			unknown_words_removing_variations_on_lemmas = set(unknown_words).difference(set(word_versions))
+			print(f'Total unknown words, removing common variations on word lemmas: {len(unknown_words_removing_variations_on_lemmas)}')
+			print(f'Percentage unknown words, after removing common variations on word lemmas: {len(unknown_words_removing_variations_on_lemmas)/len(words_on_webpage)}')
+			
+    		return unknown_words
+		
+	\end{lstlisting}
+
+\end{solution} 
+
+
+\newpage
+\subsection*{Problem 22}
+
+Examine the results of processing the URL http://news.bbc.co.uk/ using the regular expressions suggested above. You will see that there is still a fair amount of non-textual data there, particularly Javascript commands. You may also find that sentence breaks have not been properly preserved. Define further regular expressions that improve the extraction of text from this web page.
+
+\begin{solution}
+	
+	My improvments can be broken into four changes to the extraction process: 
+	\begin{enumerate}
+		
+		\item Define how BeautifulSoup's \codeword{getText()} function should concatenate the content of the stripped HTML tags, by passing it \codeword{\textbackslash n} as an argument.
+		
+		\item Create a regular expression for removing the content sandwiched within javascript \codeword{<script>} tags before the tags are parsed out
+		
+		\item Create a regular expression for removing the content sandwiched within CSS \codeword{<style>} tags before the tags are parsed out
+		
+		\item Create a regular expression for removing leftover CSS classes from the text after processing of BeautifulSoup.
+	
+	\end{enumerate}
+
+	Below you can find my implementation in code of an improved \codeword{unknown} function:
+	
+	\begin{lstlisting}
+	def unknown(url)
+		response = request.urlopen(url)
+		html = response.read().decode('utf-8')
+		# Step 1.b.: Remove any javascript or css
+		js_regex = r"<script.*>[\S\s]+?<\/script>"
+		css_regex = r"<style.*>[\S\s]+?<\/style>"
+		html_sans_js = re.sub(js_regex, '', html)
+		html_sans_js_and_css = re.sub(css_regex, '', html_sans_js)
+		# Step 2: Convert to raw text -- separating sections with a newline
+		raw = BeautifulSoup(html_sans_js).get_text('\n')
+		# Step 2.b: Remove leftover css classes which litter the text
+		css_regex_classes = r"\..*\{[\S\s]+?\}"
+		raw = re.sub(css_regex_classes, '', raw)
+		# Step 3: Get the difference  
+		known_words = set([w for w in nltk.corpus.words.words('en') if w.islower()])
+		words_on_webpage = set(re.findall(r"\b[a-z]+\b", raw))
+		unknown_words = sorted(words_on_webpage.difference(known_words))
+		print(f'Total Words from webpage: {len(words_on_webpage)}')
+		print(f'Total unknown words: {len(unknown_words)}')
+		print(f'Percentage unknown words: {len(unknown_words)/len(words_on_webpage)}')
+		# Manual investigation of results highlights that the Words Corpus doesn't include variations on word lemmas 
+		# Let's remove those variations for a better idea of how many new 'terms' appear on our webpage 
+		word_versions = re.findall(r'\b[a-z]+(?:ing|ly|ed|ious|ies|ive|es|s|ment)', ' '.join(list(unknown_words)))
+		unknown_words_removing_variations_on_lemmas = set(unknown_words).difference(set(word_versions))
+		print(f'Total unknown words, removing common variations on word lemmas: {len(unknown_words_removing_variations_on_lemmas)}')
+		print(f'Percentage unknown words, after removing common variations on word lemmas: {len(unknown_words_removing_variations_on_lemmas)/len(words_on_webpage)}')
+		print(unknown_words_removing_variations_on_lemmas)
+		return unknown_words_removing_variations_on_lemmas
+		
+	\end{lstlisting}
+	
+\end{solution} 
+
+
+\newpage
+\subsection*{Problem 29}
+
+Readability measures are used to score the reading difficulty of a text, for the purposes of selecting texts of appropriate difficulty for language learners. Let us define μw to be the average number of letters per word, and μs to be the average number of words per sentence, in a given text. The Automated Readability Index (ARI) of the text is defined to be: 4.71 μw + 0.5 μs - 21.43. Compute the ARI score for various sections of the Brown Corpus, including section f (lore) and j (learned). Make use of the fact that nltk.corpus.brown.words() produces a sequence of words, while nltk.corpus.brown.sents() produces a sequence of sentences.
+
+\begin{solution}
+	
+	My results are as follows: 
+	\\ \indent ARI score for adventure is: 4.0841684990890705
+	\\ \indent ARI score for belles\_lettres is: 10.987652885621749
+	\\ \indent ARI score for editorial is: 9.471025332953673
+	\\ \indent ARI score for fiction is: 4.9104735321302115
+	\\ \indent ARI score for government is: 12.08430349501021
+	\\ \indent ARI score for hobbies is: 8.922356393630267
+	\\ \indent ARI score for humor is: 7.887805248319808
+	\\ \indent ARI score for learned is: 11.926007043317348
+	\\ \indent ARI score for lore is: 10.254756197101155
+	\\ \indent ARI score for mystery is: 3.8335518942055167
+	\\ \indent ARI score for news is: 10.176684595052684
+	\\ \indent ARI score for religion is: 10.203109907301261
+	\\ \indent ARI score for reviews is: 10.769699888473433
+	\\ \indent ARI score for romance is: 4.34922419804213
+	\\ \indent ARI score for science\_fiction is: 4.978058336905399
+	
+	\begin{lstlisting}
+	import nltk 
+	from nltk.corpus import brown
+	
+	def ARI_for_text(text, category=""): 
+		sents = text.sents(categories=category) if category != "" else text.sents()
+		words = text.words(categories=category) if category != "" else text.words()
+		chars = ''.join(words)
+		
+		#  the average number of letters per word 
+		mu_w = len(chars) / len(words)
+		# the average number of words per sentence
+		mu_s = len(words) / len(sents)
+		
+		ari = (4.71 * mu_w) + (0.5 * mu_s) - 21.43
+		return ari
+	
+	if __name__ == "__main__":
+		for category in brown.categories(): 
+			print(f'ARI score for {category} is: {ARI_for_text(brown, category)}')
+	\end{lstlisting}
+	
+\end{solution} 
+
+
+
+\newpage
+\section*{Intro to XML} Read \href{http://www.tei-c.org/release/doc/tei-p5-doc/en/html/SG.html}{“A Gentle Introduction to XML”} 
+Install \href{https://github.com/UUDigitalHumanitieslab/tei_reader}{this TEI reader} and input a TEI XML file.
+Perform exercise 42 (above) on the raw text of the TEI XML file. You can find any TEI XML text but you could start with an English translation \href{https://github.com/OpenGreekAndLatin/english_trans-dev/tree/master/volumes}{found here}. 
+
+
+\begin{solution}
+	
+	Solution goes here
+	
+	\begin{lstlisting}
+	>>> Code Goes Here
+	>>> More crap here
+	\end{lstlisting}
+	
+\end{solution} 
+
+
+
+\section*{Investigating Text Resources} Identify a possible available textual source that you might use for a project and identify the possible challenges that you will face in preprocessing the text. You can start with the sources \href{https://docs.google.com/document/d/1Hh93ixO_204mtS0Vva-X52bt1ZJMajLHxrcmfWF5JHg/edit}{found here}, a list that will expand during the course of the semester.
+
+\begin{solution}
+	
+	Solution goes here
+	
+	\begin{lstlisting}
+	>>> Code Goes Here
+	>>> More crap here
+	\end{lstlisting}
+	
+\end{solution} 
+\end{document}
