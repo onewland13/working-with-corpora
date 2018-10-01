@@ -1,4 +1,3 @@
-
 \documentclass[11pt]{article}
 % Packages
 % ---
@@ -67,7 +66,9 @@
 
 \begin{solution}
 	
-	When I initially ran my \codeword{unknown} function on the link to chapter three of the nltk book, I thought for sure I had done something wrong in my code. Many of the terms coming up as 'unknown' were common words like 'cases', 'using' and 'normalized'.  I then manually loaded up the Words Corpus in a python interpreter to check and see if I could find those terms manually in a list of words in the corpus; much to my surprise, I couldn't! It looks like the Words Corpus ( as I confirmed later by reading through more of Chapter 3) only includes common word lemmas, ignoring common variations on those stem terms. To get a better idea of how many 'actually' new terms were being used on the linked-to  webpage, I removed any words that had any common suffixes. After controlling for those terms, a lot of the terms I was seeing were HTML-related terms that weren't parsed out by BeautifulSoup (a problem that gets exacerbated on webpages rich in javascript and advertisements), misspellings of terms, and example text that wasn't meant to pass as an actual English word. Below I've provided my code for the \codeword{unknown} function:
+	When I initially ran my \codeword{unknown} function on the link to chapter three of the nltk book, I thought for sure I had done something wrong in my code. Many of the terms coming up as 'unknown' were common words like 'cases', 'using' and 'normalized'.  I then manually loaded up the Words Corpus in a python interpreter to check and see if I could find those terms manually in a list of words in the corpus; much to my surprise, I couldn't! It looks like the Words Corpus ( as I confirmed later by reading through more of Chapter 3) only includes common word lemmas, ignoring common variations on those stem terms. 
+	
+	The first category of terms that became obvious were "variations on common lemmas". To get a better idea of how many 'actually' new terms were being used on the linked-to webpage, I removed any words that used common suffixes. After controlling for those terms, the remaining categories of terms I saw were "HTML/CSS/Javscript terms" (a category that grows on webpages rich in javascript and advertisements), "misspellings" of common terms, and "example text", terms like 'miiiinnnnneeee' that were being used in example code and wasn't ever intended to pass as an actual English word. Below I've provided my code for the \codeword{unknown} function:
 	
 	\begin{lstlisting}
 		def unknown(url): 
@@ -179,6 +180,8 @@ Readability measures are used to score the reading difficulty of a text, for the
 	\\ \indent ARI score for romance is: 4.34922419804213
 	\\ \indent ARI score for science\_fiction is: 4.978058336905399
 	
+	Below I've provided the source code: 
+	
 	\begin{lstlisting}
 	import nltk 
 	from nltk.corpus import brown
@@ -213,27 +216,42 @@ Perform exercise 42 (above) on the raw text of the TEI XML file. You can find an
 
 \begin{solution}
 	
-	Solution goes here
+	Since we were told that question 42 was optional, all I did was download a few TEI XML files (Hegel's "Philosophy of Mind" and volume 1 of 3 for Schopenhauer's "The World As Will And Idea") and then fiddled around with the two files, starting with the example code presented on the TEI Reader's github page. 
 	
-	\begin{lstlisting}
-	>>> Code Goes Here
-	>>> More crap here
-	\end{lstlisting}
 	
 \end{solution} 
 
 
 
+\newpage
 \section*{Investigating Text Resources} Identify a possible available textual source that you might use for a project and identify the possible challenges that you will face in preprocessing the text. You can start with the sources \href{https://docs.google.com/document/d/1Hh93ixO_204mtS0Vva-X52bt1ZJMajLHxrcmfWF5JHg/edit}{found here}, a list that will expand during the course of the semester.
 
 \begin{solution}
 	
-	Solution goes here
+	Sticking to my proposal to perform a landscape analysis of Hip Hop genres, I've identified four potential sources of Hip Hop lyrics that I can pull from, along with some difficulties each will come with: 
 	
-	\begin{lstlisting}
-	>>> Code Goes Here
-	>>> More crap here
-	\end{lstlisting}
-	
+	\begin{enumerate}
+		\item Rap Genius' Public API:
+			\subitem Pro: Expansive and constantly updated
+			\subitem Pro: Well-define API for application driven interfacing, which could expedite development time substantially and help avoid having to wrangle a massive dataset locally.
+			\subitem Con: API is clearly not designed to be exploratory (for example, looking up a song requires a unique RapGenius ID, not a song name) making it a non-trivial task to explore their songs in an intuitive manner. 
+		\item Original Hip Hop Lyrics Archive: 
+			\subitem Pro: Frequently updated and openly available. 
+			\subitem Pro: Categorized and indexed by artist name, album name and song title, making direct searching for a particular song or artist accessible.
+			\subitem Con: Data is in a web/text format and would have to wrangled with some web-scraping.
+			\subitem Con: Artists and songs available tend to ignore underground and experimental hip hop artists, resulting in little to no data on a sizable portion of the artists I enjoy. 
+		\item Million Song Dataset:
+			\subitem Pro: Large and freely available.
+			\subitem Pro: Fair amount of example code is available on GitHub that one could leverage.
+			\subitem Con: Possibly too large to fiddle around with barring the use of a local database.
+			\subitem Con: Doesn't appear to be actively maintained, based on outdated updates and example code written only in Python 2.
+		\item (A Journalist in the Field) Martin Connor's Dataset :
+		 	\subitem Pro: Lyrics for a large number of hip hop artists have already been curated. 
+		 	\subitem Pro: Martin may be able to share some existing code as well, making it easier to hit the ground running.
+		 	\subitem Con: Legality is unclear.
+		 	\subitem Con: Requires understanding someone else's encoding schema.
+		 	\subitem Con: Not sure what language or tools he uses in his analysis, which might make integration harder than it's worth.
+	\end{enumerate}
+
 \end{solution} 
 \end{document}

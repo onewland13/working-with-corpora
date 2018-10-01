@@ -20,6 +20,7 @@ def ARI_for_text(text, category=""):
     return ari
 
 if __name__ == "__main__":
-    # print(ARI_for_text(nltk.corpus.brown))
-    for category in brown.categories(): 
+    # print(ARI_for_text(nltk.corpus.brown))\
+    i = 0;
+    for category in brown.categories():
         print(f'ARI score for {category} is: {ARI_for_text(brown, category)}')
