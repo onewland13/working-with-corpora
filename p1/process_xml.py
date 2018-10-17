@@ -1,33 +1,117 @@
 import sys, os
-import xml.etree.ElementTree
+import re
 from bs4 import BeautifulSoup
+import json
+import pickle
 
-from tei_reader import TeiReader
-reader = TeiReader()
-
-def getAbsPath(relPath): 
+def getAllWorks(pathToWorks):
+    """
+        Returns: 
+            allWorksByAuthor: All of the works by the author in the form of a dictionary in the following format: 
+            {
+                authorName: [
+                    eachPathToWork, 
+                    ...
+                ]
+            }
+    """
+    print("Getting all our works ")
     curDir = os.getcwd()
-    filePath = os.path.join(curDir, relPath)
-    return filePath
+    directory = os.path.join(curDir, pathToWorks)
+    allWorksByAuthor = {}
+    allAuthorsWithWorks = [
+        os.path.join(directory, o)
+        for o in os.listdir(directory) 
+        if os.path.isdir(os.path.join(directory,o))
+    ]
+    for authorPath in allAuthorsWithWorks:
+        authorName = os.path.basename(authorPath);
+        allWorksByAuthor[authorName] = [];
+        allWorks = [
+            os.path.join(authorPath, work)
+            for work in os.listdir(authorPath) 
+            if not os.path.isdir(os.path.join(authorPath,work))
+        ]
+        for work in allWorks:
+            allWorksByAuthor[authorName].append(work)
+    return allWorksByAuthor
 
-def getCast(filePath):
+def getXMLTree(filePath): 
+    """
+        Given an path to an XML file, builds a navigable tree of that file using BS4 
+    """
+    print("Building an XML tree for the work")
+    print(filePath)
     file = open(filePath).read()
-    e = BeautifulSoup(file, 'lxml')
-    cast = e.findAll("role", id=True)
-    print(cast)
-    c1 = cast[0]
-    print(c1)
-    print(dir(c1))
-    characterId = c1["id"]
-    print(characterId)
-    linesForCastMember = e.findAll(who=characterId)
-    print(linesForCastMember[0])
+    xmlTree = BeautifulSoup(file, 'lxml')
+    return xmlTree
+
+def processLines(blocksOfSpeech): 
+    processedLines = []
+    for block in blocksOfSpeech: 
+        textOfBlock = block.findAll("l")
+        for line in textOfBlock: 
+            lines = line.text.split('\n')
+            for l in lines: 
+                # We want to remove stage diretcions
+                # using a heuristic 
+                lSansStageDirections = re.sub(r'\[.*', '', l)
+                if (lSansStageDirections != ""): 
+                    processedLines.append(lSansStageDirections)
+    return processedLines 
+
+def getLinesForCast(xmlTree):
+    print("Getting script for Tree")
+    cast = xmlTree.findAll("role", id=True)
+    # Create a dictionary 
+    linesByCastMember = {}
+    for character in cast:
+        characterName = character.text 
+        characterId = character["id"]
+        linesForCastMember = xmlTree.findAll(who=characterId)
+        linesObject = {}
+        # Process lines before storing
+        processedLines = processLines(linesForCastMember)
+        # Store data on object
+        linesObject["name"] = characterName
+        linesObject["lines"] = processedLines
+        if(len(processedLines) != 0): 
+            linesByCastMember[characterId] = linesObject
+    return linesByCastMember
+
+def writeScriptToJSON(script, srcFile):
+    print("Jsonifying: ", workName)
+    fileHandler = open(f"./json/{srcFile}.json", 'w')
+    json.dump(script, fileHandler)
+    fileHandler.close()  
+
+def writeEncodingGenderDoc(characters, srcFile):
+    print("Creating lookup for srcFile: ", srcFile)
+    # For GODS sake don't overwrite
+    if (os.path.isfile(f"./genders/{srcFile}.json")): 
+        print(f"FAILED - We already have a file for {srcFile}")
+        return
+    fileHandler = open(f"./genders/{srcFile}-genders.json", 'w')
+    genderLookup = {}
+    for char in characters: 
+        # Default to male to save time
+        genderLookup[char] = "M"
+    json.dump(genderLookup, fileHandler)
+    fileHandler.close()  
 
 
 if __name__ == "__main__" :
-    path = getAbsPath('/Users/dylanphelan/Documents/College/Grad/1-Sem/working-with-corpora/p1/works/shakes/tit.xml')
-    getCast(path)
-
+    worksByAuthor = getAllWorks(f'works')
+    for author in worksByAuthor:
+        works = worksByAuthor[author]
+        for workPath in works:
+            workName = os.path.basename(workPath)
+            tree = getXMLTree(workPath)
+            scriptByCharacter = getLinesForCast(tree)
+            # Create files for
+            writeEncodingGenderDoc(scriptByCharacter, workName)
+            writeScriptToJSON(scriptByCharacter, workName) 
+    
 """
 Corpora:
 ========
